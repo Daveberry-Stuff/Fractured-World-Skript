@@ -1,0 +1,36 @@
+# Player's first time joining
+on first join:
+    send "&a&l===== Welcome, %player%! =====" to player
+    send "" to player
+    send "This is the &4&lFractured World Server." to player
+    send "You have 10 hearts, and you'll be jailed for 10 minutes if you die." to player
+    send "Oh! You can't use &b&lDiamond &fand &8&lNetherite &fArmor, and you can't use &8&lNetherite &fTools." to player
+    send "&c&lPVP is enabled for everyone." to player
+    send "&c&lGood Luck. You'll need it. :)" to player
+    send "" to player
+    send "&6/rules &fto check the rules" to the player
+    send "&6/discord &fto join the discord server" to the player
+
+    set max health of player to 5
+    set health of player to 5
+
+# When the player joins the server
+on join:
+    set join message to ""
+    broadcast "&a&l>| %player% has joined the server."
+
+# When a player leaves the server
+on quit:
+    set quit message to ""
+    broadcast "&c&l<| %player% has left the server."
+
+# Custom chat messages (also unreportable too!)
+# But, disabled due to discordsrv not sending the messages to discord.
+# on chat:
+#     cancel event
+#     if player is "Daveberry":
+#         broadcast "<#008BFF><bold><%player%> &f%message%"
+#     else if player is "mangu7897":
+#         broadcast "<#FF8A00><bold><%player%> &f%message%"
+#     else:
+#         broadcast "<%player%> &f%message%"

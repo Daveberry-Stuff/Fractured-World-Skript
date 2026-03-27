@@ -1,0 +1,41 @@
+on damage:
+    set {_item} to attacker's tool
+    if {_item} is netherite sword or netherite axe or netherite pickaxe or netherite shovel or netherite hoe:
+        send "&c&lYou can't." to attacker
+        cancel event
+on leftclick:
+    set {_item} to player's tool
+    if {_item} is netherite sword or netherite axe or netherite pickaxe or netherite shovel or netherite hoe:
+        send "&c&lYou can't." to player
+        cancel event
+on rightclick:
+    set {_item} to player's tool
+    if {_item} is netherite sword or netherite axe or netherite pickaxe or netherite shovel or netherite hoe:
+        send "&c&lYou can't." to player
+        cancel event
+
+every 1 tick:
+    loop all players:
+        # Helmet
+        set {_h} to "%type of loop-player's helmet%"
+        if {_h} contains "diamond" or "netherite":
+            set loop-player's helmet to air
+            send "&c&lArmor restricted! Piece cleared." to loop-player
+            
+        # Chestplate
+        set {_c} to "%type of loop-player's chestplate%"
+        if {_c} contains "diamond" or "netherite":
+            set loop-player's chestplate to air
+            send "&c&lArmor restricted! Piece cleared." to loop-player
+            
+        # Leggings
+        set {_l} to "%type of loop-player's leggings%"
+        if {_l} contains "diamond" or "netherite":
+            set loop-player's leggings to air
+            send "&c&lArmor restricted! Piece cleared." to loop-player
+            
+        # Boots
+        set {_b} to "%type of loop-player's boots%"
+        if {_b} contains "diamond" or "netherite":
+            set loop-player's boots to air
+            send "&c&lArmor restricted! Piece cleared." to loop-player

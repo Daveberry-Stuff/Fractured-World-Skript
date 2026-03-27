@@ -1,0 +1,64 @@
+# Just wanted this one lol
+command /clearChat:
+    trigger:
+        loop 30 times:
+            send "" to player
+
+on inventory click:
+    set {_item} to player's tool
+    if {_item} is wooden hoe:
+        send "&c&lare we srs gng..." to player
+
+on join:
+    set {_online} to size of all players
+    
+    set tab list header of player to "%newline%&c&lFractured World%newline%&7Welcome, &f%player%!%newline%"
+    set tab list footer of player to "%newline%  &ePlayers Online: &f%{_online}% &7| &ePing: &f%player's ping%ms%  newline%"
+    
+    if {deadWait::%uuid of player%} is set:
+        set tab list name of player to "&7[DEAD] &8%player%"
+    else:
+        set tab list name of player to "&a[ALIVE] &f%player%"
+
+on quit:
+    wait 1 tick
+    set {_online} to size of all players
+    set tab list footer of all players to "%newline%&ePlayers Online: &f%{_online}% &7| &8Check out /discord%newline%"
+
+every 1 seconds:
+    set {_online} to size of all players
+    loop all players:
+        set tab list footer of loop-player to "%newline%  &ePlayers Online: &f%{_online}% &7| &ePing: &f%loop-player's ping%ms  %newline%"
+        
+        if {deadWait::%uuid of loop-player%} is set:
+            set tab list name of loop-player to "&c[DEAD] &f%loop-player%"
+        else:
+            set tab list name of loop-player to "&a[ALIVE] &f%loop-player%"
+
+command /rules:
+    trigger:
+        send "&6&l=== RULES ===" to player
+        send "&61. General Rules:"
+        send "  1.1. No griefing." to player
+        send "  1.2. No spawn killing." to player
+        send "  1.3. Don't kill people for no reason." to player
+        send "  1.4. Never and I say NEVER target a person." to player
+        send "&62. Chat Rules:"
+        send "  2.1. Don't beg to be revived immedietly by other people." to player
+        send "  2.2. Don't even beg to what you want to have. Fuck off." to player
+        send "  2.3. Don't even ask for admin. You'll be muted." to player
+        send "  2.4. We're not adming reviving you. It's a testing command in another server." to player
+        send "  2.5. Swearing is allowed, but tone it down." to player
+        send "  2.6. No slurs whatsoever. And I mean NO slurs. Including people who have the rights to say it." to player
+        send "  2.7. No Racism. Please." to player
+        send "&63. Gameplay Rules:"
+        send "  3.1. Stop tryharding, no lifer." to player
+        send "  3.2. No hacking, exploits or xraying." to player
+        send "  3.3. Minimaps are allowed, but use them only in the surface." to player
+        send "  3.4. Freecams are allowed, but use them only in the surface and not too far away." to player
+        send "  3.5. No giving yourself an advantage for anything, really." to player
+        send "&64. Other Rules:" to player
+        send "  4.1 No alternate accounts." to player
+        send "  4.2 Use common sense." to player
+        send "" to player
+        send "Have fun, bud. Run &b/discord &fto have more fun and give yourself the Fractured World role." to player

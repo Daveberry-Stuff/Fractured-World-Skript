@@ -1,0 +1,171 @@
+define new bot named "Daveberry's Bot":
+    token: "************************************************************************"
+    intents: default intents
+    policy: all
+    auto reconnect: true
+    on ready:
+        send "Discord Bot is now online!" to console
+
+on death of player:
+    force victim to respawn
+    set gamemode of victim to spectator
+    
+    set {_deathLoc} to location 10 meters below victim
+    strike lightning effect at {_deathLoc}
+    
+    play sound "entity.lightning_bolt.thunder" with volume 10 to all players
+    broadcast "&c&l☠ &c%victim% has died!"
+
+    if bed of victim is set:
+        set {_spawnLoc} to bed of victim
+    else:
+        set {_spawnLoc} to spawn point of world
+        send "&cYou have no bed! Using world spawn." to victim
+    
+    teleport victim to {_spawnLoc}
+    set {deadWait::%uuid of victim%} to true
+    
+    loop 600 times:
+        if victim is offline:
+            stop trigger
+            
+        if {deadWait::%uuid of victim%} is not set:
+            stop trigger
+            
+        set {_time} to 600 - loop-number
+        send action bar "&c&lRESPAWNING IN: &e%{_time}%s" to victim
+        
+        if distance between victim and {_spawnLoc} > 2:
+            teleport victim to {_spawnLoc}
+        
+        wait 1 second
+
+    delete {deadWait::%uuid of victim%}
+    if bed of victim is set:
+        teleport victim to bed of victim
+    else:
+        teleport victim to spawn point of world
+        
+    set gamemode of victim to survival
+    send action bar "&a&lYOU HAVE RESPAWNED!" to victim
+    play sound "entity.experience_orb.pickup" to victim
+
+    broadcast "&e%victim% &ahas been revived through timer!"
+    make a new discord embed:
+        set title of embed to "%victim% has been revived through timer!"
+        set embed color of embed to lime
+    post last embed to text channel with id "1327862331161448501"
+
+on player start spectating:
+    if {deadWait::%uuid of player%} is set:
+        cancel event
+
+on player move:
+    if {deadWait::%uuid of player%} is set:
+        cancel event
+
+on join:
+    if {deadWait::%uuid of player%} is set:
+        set gamemode of player to spectator
+        if bed of player is set:
+            teleport player to bed of player
+        
+        send "&cYou tried to leave while dead! Resetting your timer..."
+        loop 600 times:
+            if player is offline:
+                stop trigger
+            if {deadWait::%uuid of player%} is not set:
+                stop trigger
+            
+            set {_time} to 600 - loop-number
+            send action bar "&c&lRESPAWNING IN: &e%{_time}%s" to player
+            wait 1 second
+            
+        # Release them
+        delete {deadWait::%uuid of player%}
+        set gamemode of player to survival
+        if bed of player is set:
+            teleport player to bed of player
+        send action bar "&a&lYOU HAVE RESPAWNED!" to player
+        broadcast "&e%player% &ahas been revived through timer!"
+        make a new discord embed:
+            set title of embed to "%player% has been revived through timer!"
+            set embed color of embed to green
+        post last embed to text channel with id "1327862331161448501"
+
+on chat:
+    if {deadWait::%uuid of player%} is set:
+        send "&c&lYou're dead! You can't chat as a ghost." to player
+        cancel event
+on command:
+    if {deadWait::%uuid of player%} is set:
+        if player has permission "admin.bypass.ghost":
+            stop
+
+        send "&c&lYou're dead! You can't use commands as a ghost." to player
+        cancel event
+
+on teleport:
+    if {deadWait::%uuid of player%} is set:
+        if teleport cause is spectate:
+            send "&c&lYou can't teleport to this player. You're a ghost." to player
+            cancel event
+
+command /admin-revive <player>:
+    permission: admin.revive
+    permission message: &cYou do not have permission to admin revive players.
+    usage: /admin-revive [PlayerName]
+    trigger:
+        if {deadWait::%uuid of arg-1%} is set:
+            delete {deadWait::%uuid of arg-1%}
+            set gamemode of arg-1 to survival
+            
+            broadcast "&e%player% &amanually revived &e%arg-1% &athrough commands!"
+            send "&aYou have been manually revived by &e%player%&a!" to arg-1
+            send "&aSuccessfully revived &e%arg-1%&a." to player
+            play sound "entity.experience_orb.pickup" to arg-1 and player
+
+            make a new discord embed:
+                set title of embed to "%player% manually revived %arg-1% through commands!"
+                set embed color of embed to lime
+            post last embed to text channel with id "1327862331161448501"
+        else:
+            send "&cThat player is not currently in the death-wait state." to player
+
+on load:
+    set {fractured::item} to end crystal named "&c&lRevive Crystal" with lore "&7This item is used to revive a player.%newline%&7Use it wisely."
+    register new shaped recipe for {fractured::item} using (iron ingot, iron nugget, iron ingot, iron nugget, clock, iron nugget, iron ingot, iron nugget, iron ingot) with id "fractured_crystal"
+
+on rightclick:
+    if name of player's tool is "&c&lRevive Crystal":
+        cancel event
+        send "&eUse &f/revive <player> &eto revive a player" to player
+
+command /revive <player>:
+    usage: /revive <player>
+    trigger:
+        if {deadWait::%uuid of arg-1%} is not set:
+            send "&c%arg-1% is not currently dead or in the waiting queue." to player
+            stop
+        
+        set {_requiredCrystal} to end crystal named "&c&lRevive Crystal" with lore "&7This item is used to revive a player.%newline%&7Use it wisely."
+        if player has {_requiredCrystal}:
+            remove 1 of {_requiredCrystal} from player's inventory
+
+            delete {deadWait::%uuid of arg-1%}
+            
+            if arg-1 is online:
+                set gamemode of arg-1 to survival
+                set health of arg-1 to 5
+                
+                play sound "block.beacon.activate" to arg-1
+                send action bar "&a&lYOU HAVE BEEN REVIVED BY %player%!" to arg-1
+                send "&a&lYou have revived %arg-1%!" to player
+                broadcast "&e%player% &asacrificed items to revive &e%arg-1%!"
+
+                make a new discord embed:
+                    set title of embed to "%player% sacrificed items to revive %arg-1%!"
+                    set embed color of embed to lime
+                post last embed to text channel with id "1327862331161448501"
+        else:
+            send "&c&lYou do not have the required items to revive %arg-1%" to player
