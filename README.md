@@ -17,7 +17,7 @@ PLEASE CREDIT ME FOR MAKING THE SCRIPTS IN THE FIRST PLACE. PLEASE DO NOT SELL W
 This plugin is what you need to make everything at [@skripts/](skripts/).
 
 ### DiSky
-To send **Revive** through player reviving the dead person, or player reviving through timer.
+To send **Revive** through discord from player reviving the dead person, or player reviving through timer.
 
 ### SkBee
 For crafting the **Revive Crystal**. That's it.
